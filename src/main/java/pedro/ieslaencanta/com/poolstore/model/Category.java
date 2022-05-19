@@ -18,6 +18,8 @@ public class Category {
     private HashMap<Integer,Product> products;
     public Category(){
         this.products=new HashMap<>();
+        this.name="";
+        this.id=-1;
     }
     public void addProduct(Product p){
         p.setId(this.getNextId());

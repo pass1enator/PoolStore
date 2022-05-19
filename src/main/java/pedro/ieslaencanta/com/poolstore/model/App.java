@@ -4,9 +4,12 @@
  */
 package pedro.ieslaencanta.com.poolstore.model;
 
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -37,12 +40,11 @@ public class App {
         c.setId(3);
         c.setName("Piedra artificial");
         this.addCategory(c);
-        
-        
         c= new Category();
         c.setId(4);
         c.setName("Anti algas");
        this.addCategory(c);
+          
     }
 
     public Collection<Category> getCategorys() {
@@ -50,13 +52,15 @@ public class App {
     }
 
     public void addCategory(Category c) {
+        if(c.getId()==-1)
+            c.setId(this.getNextId());
         this.categorias.put(c.getName(), c);
     }
-    public void removeCategory(Category c){
-        this.categorias.remove(c.getId());
+    public Category removeCategory(Category c){
+        return this.categorias.remove(c.getName());
     }
-    public void removeCategory(int id){
-        this.categorias.remove(Integer.valueOf(id));
+    public Category removeCategory(String name){
+        return this.categorias.remove(name);
     }
     public Category getCategory(String name) {
         return this.categorias.get(name);
@@ -86,5 +90,18 @@ public class App {
             throw new Exception("No existe esa categoria");
         }
     }
+    
+    private Integer getNextId(){
+       Optional<Category> o= this.categorias.values().stream().max(
+               (a,b)->{ 
+                   return a.getId()-b.getId();
+                   }
+       );
+       if(o.isPresent())
+           return o.get().getId()+1;
+       else
+           return 1;
+               
+   }
 
 }
