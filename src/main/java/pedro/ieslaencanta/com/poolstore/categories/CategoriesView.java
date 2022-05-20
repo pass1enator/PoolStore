@@ -24,7 +24,7 @@ public class CategoriesView extends VerticalLayout {
         this.setAlignItems(Alignment.CENTER);
         this.nuevo = new Button("Nuevo");
         this.nuevo.addClickListener(listener -> {
-            getUI().get().getPage().setLocation("/category");
+            getUI().get().getPage().setLocation("/product/:category");
 
         });
         grid = new Grid<>(Category.class, false);
@@ -51,7 +51,7 @@ public class CategoriesView extends VerticalLayout {
         grid.addComponentColumn(category -> {
             Button editButton = new Button("Productos");
             editButton.addClickListener(e -> {
-                getUI().get().getPage().setLocation("/category/product/" + category.getName());
+                getUI().get().getPage().setLocation("/products/" + category.getName());
 
             });
             return editButton;

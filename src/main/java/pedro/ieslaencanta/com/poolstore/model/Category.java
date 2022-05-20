@@ -62,16 +62,16 @@ public class Category {
         this.name = name;
     }
     
-    @Override
-    public String toString(){
-        return this.name;
-    }
-
+  
     public HashMap<Integer,Product> getProducts() {
         return products;
     }
 
     public void setProducts(HashMap<Integer,Product> products) {
         this.products = products;
+    }
+    @Override
+    public String toString(){
+        return "("+this.id+")"+this.name+": Products count "+this.products.size();
     }
 }
