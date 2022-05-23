@@ -6,6 +6,7 @@ package pedro.ieslaencanta.com.poolstore.model;
 
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Optional;
  */
 public class App {
 
-    private HashMap<String, Category> categorias;
+    private HashMap<Integer, Category> categorias;
     
     public App() {
         this.categorias = new HashMap<>();
@@ -26,11 +27,20 @@ public class App {
 
     public void init() {
         Category c;
+        Product p;
         c = new Category();
         c.setId(1);
         c.setName("Cloro");
         this.addCategory(c);
-
+        p= new Product();
+        
+        p.setDescription("A ver si lo borra");
+        p.setMinstock(1);
+        p.setStock(4);
+        p.setPrice(4.5d);
+        c.addProduct(p);
+        
+        
         c = new Category();
         c.setId(2);
         c.setName("Filtros");
@@ -54,43 +64,49 @@ public class App {
     public void addCategory(Category c) {
         if(c.getId()==-1)
             c.setId(this.getNextId());
-        this.categorias.put(c.getName(), c);
+        this.categorias.put(c.getId(), c);
     }
     public Category removeCategory(Category c){
-        return this.categorias.remove(c.getName());
+        return this.categorias.remove(c.getId());
     }
-    public Category removeCategory(String name){
-        return this.categorias.remove(name);
+    public Category removeCategory(Integer id){
+        return this.categorias.remove(id);
     }
-    public Category getCategory(String name) {
-        return this.categorias.get(name);
+    public Category getCategory(Integer id) {
+        return this.categorias.get(id);
     }
 
-    public Product getProduct(String categoryname, Integer productid) {
+    public Product getProduct(Integer categoryid, Integer productid) {
 
-        if (this.categorias.containsKey(categoryname)) {
-            return this.categorias.get(categoryname).getProduct(Integer.SIZE);
+        if (this.categorias.containsKey(categoryid)) {
+            return this.categorias.get(categoryid).getProduct(Integer.SIZE);
         } else {
             return null;
         }
     }
 
     public void addProduct(Category c, Product p) throws Exception {
-        if (this.categorias.containsKey(c.getName())) {
-            this.categorias.get(c.getName()).addProduct(p);
+        if (this.categorias.containsKey(c.getId())) {
+            this.categorias.get(c.getId()).addProduct(p);
         } else {
             throw new Exception("No existe esa categoria");
         }
     }
 
-    public void addProduct(String categoryname, Product p) throws Exception {
-        if (this.categorias.containsKey(categoryname)) {
-            this.categorias.get(categoryname).addProduct(p);
+    public void addProduct(Integer categoryid, Product p) throws Exception {
+        if (this.categorias.containsKey(categoryid)) {
+            this.categorias.get(categoryid).addProduct(p);
         } else {
             throw new Exception("No existe esa categoria");
         }
     }
-    
+    public List<Product>getAllProducts(){
+        ArrayList<Product> p= new ArrayList<>();
+        this.categorias.values().stream().forEach(c->{
+            p.addAll(c.getProducts().values());
+        });
+        return p;
+    }  
     private Integer getNextId(){
        Optional<Category> o= this.categorias.values().stream().max(
                (a,b)->{ 

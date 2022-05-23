@@ -7,14 +7,19 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import pedro.ieslaencanta.com.poolstore.Principal;
+import com.vaadin.flow.router.RouterLayout;
+import pedro.ieslaencanta.com.poolstore.Main;
+import pedro.ieslaencanta.com.poolstore.Controller;
+
 import pedro.ieslaencanta.com.poolstore.model.Category;
 
 /**
  * The main view contains a button and a click listener.
  */
-@Route("main")
-public class CategoriesView extends VerticalLayout {
+
+
+@Route(value = "categories", layout = Main.class)
+public class CategoriesView extends VerticalLayout  implements RouterLayout {
 
     Grid<Category> grid;
     Button nuevo;
@@ -24,7 +29,7 @@ public class CategoriesView extends VerticalLayout {
         this.setAlignItems(Alignment.CENTER);
         this.nuevo = new Button("Nuevo");
         this.nuevo.addClickListener(listener -> {
-            getUI().get().getPage().setLocation("/product/:category");
+            getUI().get().getPage().setLocation("/category");
 
         });
         grid = new Grid<>(Category.class, false);
@@ -33,7 +38,7 @@ public class CategoriesView extends VerticalLayout {
         grid.addComponentColumn(category -> {
             Button editButton = new Button("Edit");
             editButton.addClickListener(e -> {
-                getUI().get().getPage().setLocation("/category/" + category.getName());
+                getUI().get().getPage().setLocation("/category/" + category.getId());
 
             });
             return editButton;
@@ -42,21 +47,21 @@ public class CategoriesView extends VerticalLayout {
             Button deleteButton = new Button("Borrar");
             deleteButton.addClickListener(e -> {
                
-                Category d=Principal.getInstance().getAplicacion().removeCategory(category);
+                Category d=Controller.getInstance().getAplicacion().removeCategory(category);
                 grid.getDataProvider().refreshAll();
-                Notification.show(Principal.getInstance().getAplicacion().getCategorys().size()+" -"+category.getId());
+                   
             });
             return deleteButton;
         });
         grid.addComponentColumn(category -> {
-            Button editButton = new Button("Productos");
-            editButton.addClickListener(e -> {
-                getUI().get().getPage().setLocation("/products/" + category.getName());
+            Button productButton = new Button("Productos");
+            productButton.addClickListener(e -> {
+                getUI().get().getPage().setLocation("/products/" + category.getId());
 
             });
-            return editButton;
+            return productButton;
         });
-        grid.setItems(Principal.getInstance().getAplicacion().getCategorys());
+        grid.setItems(Controller.getInstance().getAplicacion().getCategorys());
         add(grid);
         HorizontalLayout buttons = new HorizontalLayout(this.nuevo);
         nuevo.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

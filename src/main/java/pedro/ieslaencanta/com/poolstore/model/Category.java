@@ -4,48 +4,65 @@
  */
 package pedro.ieslaencanta.com.poolstore.model;
 
-
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.validation.constraints.NotEmpty;
+import pedro.ieslaencanta.com.poolstore.product.ProductsView;
 
 /**
  *
  * @author Pedro
  */
 public class Category {
+
     private int id;
+
+    @NotEmpty
     private String name;
-    private HashMap<Integer,Product> products;
-    public Category(){
-        this.products=new HashMap<>();
-        this.name="";
-        this.id=-1;
+    private HashMap<Integer, Product> products;
+
+    public Category() {
+        this.products = new HashMap<>();
+        this.name = "";
+        this.id = -1;
     }
-    public void addProduct(Product p){
+
+    public void addProduct(Product p) {
         p.setId(this.getNextId());
+        p.setCategory(this);
         this.getProducts().put(p.getId(), p);
     }
-    public void removeProduct(Product p){
-        Product t=this.getProducts().get((Integer)p.getId());
-        if(t!=null)
-            this.getProducts().remove(t);
+
+    public void removeProduct(Product p)  {
+        Product t = this.getProducts().get((Integer) p.getId());
+           
+        if (t != null) {
+            this.getProducts().remove(p.getId());
+        }
+       
     }
-    public Product getProduct(Integer id){
+
+    public Product getProduct(Integer id) {
         return this.getProducts().get(id);
     }
-   private Integer getNextId(){
-       Optional<Integer> o= this.getProducts().keySet().stream().max(
-               (a,b)->{ 
-                   
-                   return 1;}
-       );
-       if(o.isPresent())
-           return o.get()+1;
-       else
-           return 1;
-               
-   }
-        
+
+    private Integer getNextId() {
+        Optional<Integer> o = this.getProducts().keySet().stream().max(
+                (a, b) -> {
+
+                    return 1;
+                }
+        );
+        if (o.isPresent()) {
+            return o.get() + 1;
+        } else {
+            return 1;
+        }
+
+    }
+
     public int getId() {
         return id;
     }
@@ -61,17 +78,17 @@ public class Category {
     public void setName(String name) {
         this.name = name;
     }
-    
-  
-    public HashMap<Integer,Product> getProducts() {
+
+    public HashMap<Integer, Product> getProducts() {
         return products;
     }
 
-    public void setProducts(HashMap<Integer,Product> products) {
+    public void setProducts(HashMap<Integer, Product> products) {
         this.products = products;
     }
+
     @Override
-    public String toString(){
-        return "("+this.id+")"+this.name+": Products count "+this.products.size();
+    public String toString() {
+        return "(" + this.id + ")" + this.name + ": Products count " + this.products.size();
     }
 }

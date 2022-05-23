@@ -6,6 +6,10 @@ package pedro.ieslaencanta.com.poolstore.model;
 
 import java.util.Collection;
 import java.util.List;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import javax.validation.constraints.Positive;
 
 /**
  *
@@ -14,12 +18,21 @@ import java.util.List;
 public class Product {
 
     private int id;
-    
+    @NotEmpty
+    @NotNull
     private String name;
+    @Positive
+  
     private double price;
+    @Positive
+   
     private int stock;
+    @Positive
     private int minstock;
+    @NotNull
+    @NotEmpty
     private String description;
+    private Category category;
 
     public List<Product> findProduct(Collection<Product> collection) {
         return null;
@@ -90,5 +103,13 @@ public class Product {
         } else {
             throw new Exception("No existe stock suficiente");
         }
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

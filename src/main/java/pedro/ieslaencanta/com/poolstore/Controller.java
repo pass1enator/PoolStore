@@ -4,15 +4,22 @@
  */
 package pedro.ieslaencanta.com.poolstore;
 
+/**
+ *
+ * @author Pedro
+ */
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pedro.ieslaencanta.com.poolstore.model.App;
 
 /**
  *
  * @author Pedro
  */
-public class Principal {
+public class Controller {
 
-    private static Principal instance;
+    private static Controller instance;
     private String usuario, password;
     private App aplicacion;
     private boolean islogin;
@@ -21,7 +28,7 @@ public class Principal {
         instance = null;
     }
 
-    private Principal() {
+    private Controller() {
         this.usuario = "pedro";
         this.password = "pedro";
         this.aplicacion = new App();
@@ -38,14 +45,16 @@ public class Principal {
         return this.islogin;
     }
 
-    public static Principal getInstance() {
-        if (Principal.instance == null) {
-            Principal.instance = new Principal();
+    public static Controller getInstance() {
+        if (Controller.instance == null) {
+            Controller.instance = new Controller();
         }
-        return Principal.instance;
+        return Controller.instance;
     }
 
     public boolean validate(String user, String password) {
+         Logger.getLogger(Controller.class.getName()).log(Level.SEVERE,  "*-*-*-"+user+" "+password);
+        
         if (this.usuario.equals(user) && this.password.equals(password)) {
             this.islogin = true;
             return true;
@@ -56,7 +65,9 @@ public class Principal {
     public App getAplicacion() {
         return aplicacion;
     }
-
+    public void unloggin(){
+        this.islogin=false;
+    }
     public void setAplicacion(App aplicacion) {
         this.aplicacion = aplicacion;
     }

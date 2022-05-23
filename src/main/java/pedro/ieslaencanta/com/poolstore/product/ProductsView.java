@@ -1,35 +1,38 @@
 package pedro.ieslaencanta.com.poolstore.product;
 
-import pedro.ieslaencanta.com.poolstore.categories.*;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
-import pedro.ieslaencanta.com.poolstore.Principal;
-import pedro.ieslaencanta.com.poolstore.model.Category;
+import com.vaadin.flow.router.RouterLayout;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import pedro.ieslaencanta.com.poolstore.Main;
+import pedro.ieslaencanta.com.poolstore.Controller;
 import pedro.ieslaencanta.com.poolstore.model.Product;
 
 /**
  * The main view contains a button and a click listener.
  */
-@Route("/products/:category_name")
-public class ProductsView extends VerticalLayout implements BeforeEnterObserver{
+@Route(value = "/products/:category_id?", layout = Main.class)
+
+public class ProductsView extends VerticalLayout implements BeforeEnterObserver, RouterLayout {
 
     Grid<Product> grid;
-    private Principal p;
+    private Controller p;
     Button nuevo;
-    String category_name;
+    Integer category_id;
+
     public ProductsView() {
-        this.p= Principal.getInstance();
+        this.p = Controller.getInstance();
         this.setAlignItems(Alignment.CENTER);
         this.nuevo = new Button("Nuevo");
         this.nuevo.addClickListener(listener -> {
-            getUI().get().getPage().setLocation("product/"+this.category_name);
+            getUI().get().getPage().setLocation("product/" + this.category_id);
 
         });
         grid = new Grid<>(Product.class, false);
@@ -41,33 +44,46 @@ public class ProductsView extends VerticalLayout implements BeforeEnterObserver{
         grid.addComponentColumn(p -> {
             Button editButton = new Button("Edit");
             editButton.addClickListener(e -> {
-                getUI().get().getPage().setLocation("/product/" + p.getName());
+                getUI().get().getPage().setLocation("/product/" + p.getCategory().getId() + "/" + p.getId());
 
             });
             return editButton;
         });
-        grid.addComponentColumn(p -> {
+        grid.addComponentColumn(pr -> {
             Button deleteButton = new Button("Borrar");
             deleteButton.addClickListener(e -> {
                
-              //  PCategory d=Principal.getInstance().getAplicacion().removeCategory(category);
-                grid.getDataProvider().refreshAll();
-              //  Notification.show(Principal.getInstance().getAplicacion().getCategorys().size()+" -"+category.getId());
+                     Logger.getLogger(ProductsView.class.getName()).log(Level.SEVERE, pr.getCategory().getId()+" ------------"+pr.getId());
+               Logger.getLogger(ProductsView.class.getName()).log(Level.SEVERE,  p.getAplicacion().getCategory(pr.getCategory().getId()).toString());
+            
+                    p.getAplicacion().getCategory(pr.getCategory().getId()).removeProduct(pr);
+                    //  PCategory d=Principal.getInstance().getAplicacion().removeCategory(category);
+                    grid.getDataProvider().refreshAll();
+                    //  Notification.show(Principal.getInstance().getAplicacion().getCategorys().size()+" -"+category.getId());
+                
             });
             return deleteButton;
         });
-       
-      //  grid.setItems(Principal.getInstance().getAplicacion().getCategorys());
+
+        //  grid.setItems(Principal.getInstance().getAplicacion().getCategorys());
         add(grid);
-        HorizontalLayout buttons = new HorizontalLayout(this.nuevo);
-        nuevo.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        add( buttons);
+
     }
-    
-     @Override
+
+    @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        this.category_name=event.getRouteParameters().get("category_name").get();
-        this.grid.setItems(this.p.getAplicacion().getCategory(category_name).getProducts().values());
-      
+        String tempo = event.getRouteParameters().get("category_id").orElse(null);
+        //si recibe algún parámetro
+        if (tempo != null) {
+            this.category_id = Integer.valueOf(tempo);
+            this.grid.setItems(this.p.getAplicacion().getCategory(Integer.valueOf(category_id)).getProducts().values());
+            //solo se añade el botón si viene de la categoria
+            HorizontalLayout buttons = new HorizontalLayout(this.nuevo);
+            nuevo.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            add(buttons);
+        } else {
+            this.grid.setItems(this.p.getAplicacion().getAllProducts());
+        }
+
     }
 }
